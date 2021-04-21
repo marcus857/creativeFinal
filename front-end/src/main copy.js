@@ -5,7 +5,6 @@ import mock from './mock-data.js'
 import full from './fullDeck.js'
 
 let data = {
-  user: null,
   products: mock,
   deck: full,
   cart: [],

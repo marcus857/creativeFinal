@@ -23,7 +23,9 @@
         <input type="password" placeholder="password" v-model="passwordLogin">
       </fieldset>
       <fieldset>
+
         <button type="submit" class="pure-button pure-button-primary" @click.prevent="login">Login</button>
+    
       </fieldset>
     </form>
     <p v-if="errorLogin" class="error">{{errorLogin}}</p>
@@ -34,7 +36,7 @@
 <script>
 import axios from 'axios';
 export default {
-  name: 'HomePage',
+  name: 'Login',
   data() {
     return {
       firstName: '',
@@ -47,6 +49,7 @@ export default {
       errorLogin: '',
     }
   },
+  
     methods: {
     async register() {
       this.error = '';
@@ -61,6 +64,7 @@ export default {
           password: this.password,
         });
         this.$root.$data.user = response.data.user;
+
       } catch (error) {
         this.error = error.response.data.message;
         this.$root.$data.user = null;
@@ -77,6 +81,7 @@ export default {
           password: this.passwordLogin,
         });
         this.$root.$data.user = response.data.user;
+
       } catch (error) {
         this.errorLogin = "Error: " + error.response.data.message;
         this.$root.$data.user = null;

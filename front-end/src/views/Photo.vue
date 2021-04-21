@@ -1,7 +1,7 @@
 <template>
 <div class="home">
 
-  <div class="image">
+  <div v-if= "user" class="image">
       <img :src="photo.path" />
       <div class="photoInfo">
         <p class="photoTitle">{{photo.title}}</p>
@@ -13,20 +13,31 @@
     </div>
   <p v-if="error">{{error}}</p>
 
-  <Comment :comments ="comments" />
+<div class="image" v-for="comment in comments" :key="comment.id">
+      <h3>{{comment.text}}</h3>
+      <h2>{{comment.user.firstName}} {{comment.user.lastName}}</h2>
+
+      <h2>{{formatDate(comment.created)}}</h2>
+      
+    </div>
+
+      <form class="pure-form">
+      <fieldset>
+        <legend>Comments</legend>
+        <input placeholder="Type Comment Here" v-model="text">
+      </fieldset>
+      <fieldset>
+        <button type="submit" class="pure-button pure-button-primary" @click.prevent="postComment">Post Comment</button>
+      </fieldset>
+    </form>
 </div>
 </template>
 
 <script>
 import axios from 'axios';
 import moment from 'moment';
-import Login from '@/components/Login.vue';
-import Comment from '@/components/Comment.vue';
+
 export default {
-      components: {
-          Login,
-          Comment,
-      },
 
   name: 'Home',
     data() {
@@ -34,6 +45,7 @@ export default {
       photo: [],
       comments: [],
       error: '',
+      text: '',
     }
   },
 
@@ -45,6 +57,15 @@ export default {
     } catch (error) {
       this.$root.$data.user = null;
     }
+
+    try {
+        let response = await axios.get(`/api/comments/${this.$route.params.id}`);
+        this.comments = response.data;
+        return true;
+      } catch (error) {
+        console.log(error);
+      }
+    
   },
   methods: {
     async getPhoto() {
@@ -52,12 +73,24 @@ export default {
         let response = await axios.get(`/api/photos/${this.$route.params.id}`);
         this.photo = response.data;
 
-    
       } catch (error) {
         this.error = error.response.data.message;
       }
     },
 
+        async postComment() {
+      try{
+        await axios.post(`/api/comments/${this.$route.params.id}`, {
+          text: this.text,})
+
+        let response = await axios.get(`/api/comments/${this.$route.params.id}`);
+        this.comments = response.data;
+        
+
+      } catch (error) {
+        this.error = "Error Posting Data to DB";
+      }
+    },
 
      formatDate(date) {
       if (moment(date).diff(Date.now(), 'days') < 15)

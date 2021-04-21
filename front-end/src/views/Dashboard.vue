@@ -1,21 +1,24 @@
 <template>
 <div class="dashboard">
-  <MyPhotos v-if="user" />
+  <ProductCart v-if="user" />
   <Login v-else />
 </div>
 </template>
 
 <script>
-import MyPhotos from '@/components/MyPhotos.vue';
+import ProductCart from '@/components/ProductCart.vue';
 import Login from '@/components/Login.vue';
 import axios from 'axios';
 export default {
   name: 'dashboard',
   components: {
-    MyPhotos,
     Login,
+    ProductCart,
+    
   },
+  
   async created() {
+     
     try {
       let response = await axios.get('/api/users');
       this.$root.$data.user = response.data.user;
@@ -23,10 +26,11 @@ export default {
       this.$root.$data.user = null;
     }
   },
-  computed: {
+      computed: {
     user() {
       return this.$root.$data.user;
     }
-  }
+  },
+
 }
 </script>
